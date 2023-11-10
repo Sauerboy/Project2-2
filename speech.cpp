@@ -54,7 +54,7 @@ void draw_speech_bubble()
     //****************
     // TODO: Implement
     //****************
-    uLCD.rectangle(90, 92, 0, 128, 0xFFFFFF);
+    uLCD.rectangle(100, 105, 0, 150, 0xFFFFFF);
     //1. Draw a speech bubble at the bottom of the screen 
     // Hint: You can stack ULCD rectangles to make a border
     
@@ -68,7 +68,7 @@ void erase_speech_bubble()
     
     //1. Erase the speech bubble at the bottom of the screen
     // Hint: You can overwrite the bubble with a empty (black) one
-    uLCD.rectangle(90, 92, 0, 128, 0);
+    uLCD.rectangle(100, 105, 0, 150, 0);
 }
 
 void draw_speech_line(const char* line, int which)
@@ -78,12 +78,12 @@ void draw_speech_line(const char* line, int which)
     //****************
     //1. Set the location which line of text will go the uLCD
     // Hint: Change the y coordinate based on which line (top or bottom)
-
-    
+    uLCD.locate(0, 13 + which);
     //2. For each character in the text, write it to uLCD
     for (int i = 0; line[i] && i < 17; i++) //We can simplify by limiting each line to 17 char
     {
         //TODO: Write the character
+        uLCD.putc(line[i]);
         wait_ms(30); 
     }
 }
@@ -96,7 +96,9 @@ void speech_bubble_wait()
     
     // 1. Keep waiting until the action button is pressed 
     //   Hint: What type of loop can we use to stay until a condition is met?
-
+    while(!read_inputs().b1) {
+        pc.printf("Bubble Waiting Loop");
+    }
 
 }
 
@@ -107,6 +109,10 @@ void speech(const char* line1, const char* line2)
     //****************
     // 1. Place the two lines into an array of lines
     // 2. Pass in to long_speech with the corresponding number of lines
+    const char* lines [2];
+    lines[0] = line1;
+    lines[1] = line2;
+    long_speech(lines, 2);
 }
 
 void long_speech(const char* lines[], int n)
@@ -117,9 +123,14 @@ void long_speech(const char* lines[], int n)
     //****************
 
     //1. Create a speech bubble
-
+    draw_speech_bubble();
     //2. For each lines, display only two lines at a time
     //   If two lines are displayed, make sure to wait (call the wait function)
+    for(int i = 0; i < n; i += 2) {
+    draw_speech_line(lines[i], 0);
+    draw_speech_line(lines[i + 1], 1);
+    speech_bubble_wait();
+    }
 
     //3. Erase the speech bubble when you are done
 

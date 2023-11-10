@@ -72,32 +72,25 @@ int get_action(GameInputs inputs)
     //******************
     // 1. Check your action and menu button inputs and return the corresponding action value
     if (inputs.b1) {
-        pc.printf("B1");
         return ACTION_BUTTON;
     }
     if (inputs.b2) {
-        pc.printf("B2");
         return MENU_BUTTON;
     }
     if (inputs.b3) {
-        pc.printf("B3");
         return ATTACK_BUTTON;
     }
     // 2. Check for your navigation switch inputs and return the corresponding action value
     if (inputs.ns_up) {
-        pc.printf("Up");
         return GO_UP;
     }
     if (inputs.ns_down) {
-        pc.printf("Down");
         return GO_DOWN;
     }
     if (inputs.ns_left) {
-        pc.printf("Left");
         return GO_LEFT;
     }
     if (inputs.ns_right) {
-        pc.printf("Right");
         return GO_RIGHT;
     }
     // If no button is pressed, just return no action value
@@ -200,7 +193,9 @@ int update_game(int action)
                 get_east(Player.x, Player.y)->type == NPC ||
                 get_west(Player.x, Player.y)->type == NPC) {
                     Player.talked_to_npc = true;
+                    pc.printf("Pre-Speech");
                     speech("You must buzz your head", "Sorry ahhhhh");
+                    pc.printf("Post-Speech");
                     if (Player.game_solved) {
                         Player.has_key = true;
                     }

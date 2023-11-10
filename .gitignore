@@ -1,0 +1,9 @@
+BUILD
+.mbed
+compile_commands.json
+.clangd
+.cache
+mbed
+4DGL-uLCD-SE
+Nav_Switch
+wave_player

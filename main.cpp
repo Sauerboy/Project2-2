@@ -38,6 +38,7 @@ struct {
     bool has_key;       // flag when obtained the key
     bool game_solved;   // flag when game is complete
     bool talked_to_npc; // flag when you've talked to npc
+    bool has_item;
 
     //You will need to add more flags as needed
 
@@ -192,13 +193,24 @@ int update_game(int action)
                 get_south(Player.x, Player.y)->type == NPC ||
                 get_east(Player.x, Player.y)->type == NPC ||
                 get_west(Player.x, Player.y)->type == NPC) {
-                    Player.talked_to_npc = true;
-                    pc.printf("Pre-Speech");
-                    speech("You must buzz your head", "Sorry ahhhhh");
-                    pc.printf("Post-Speech");
                     if (Player.game_solved) {
                         Player.has_key = true;
+                        return FULL_DRAW;
                     }
+                    if (!Player.has_item) {
+                    const char* lines [7];
+                    lines[0] = "Go acquire tofu   ";
+                    lines[1] = "from the ninja Koh";
+                    lines[2] = "ler. And I will te";
+                    lines[3] = "ach you the tofu  ";
+                    lines[4] = "shuriken. You     ";
+                    lines[5] = "need this attack  ";
+                    lines[6] = "to defeat Aaron   ";
+                    long_speech(lines, 7);
+                    return FULL_DRAW;
+                    }
+
+                    
                     return FULL_DRAW;
                 }
 

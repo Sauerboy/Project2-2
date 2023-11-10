@@ -11,6 +11,7 @@
 #include "speech.h"
 
 #include "globals.h"
+#include "graphics.h"
 #include "hardware.h"
 
 ///////////////////////////////
@@ -54,7 +55,8 @@ void draw_speech_bubble()
     //****************
     // TODO: Implement
     //****************
-    uLCD.rectangle(100, 105, 0, 150, 0xFFFFFF);
+    uLCD.filled_rectangle(0,   93, 127, 94, WHITE);
+    uLCD.filled_rectangle(0,   95, 127, 117, BLACK);
     //1. Draw a speech bubble at the bottom of the screen 
     // Hint: You can stack ULCD rectangles to make a border
     
@@ -68,7 +70,8 @@ void erase_speech_bubble()
     
     //1. Erase the speech bubble at the bottom of the screen
     // Hint: You can overwrite the bubble with a empty (black) one
-    uLCD.rectangle(100, 105, 0, 150, 0);
+    uLCD.filled_rectangle(0,   94, 127, 95, BLACK);
+    draw_border();
 }
 
 void draw_speech_line(const char* line, int which)
@@ -78,7 +81,7 @@ void draw_speech_line(const char* line, int which)
     //****************
     //1. Set the location which line of text will go the uLCD
     // Hint: Change the y coordinate based on which line (top or bottom)
-    uLCD.locate(0, 13 + which);
+    uLCD.locate(0, 12 + which);
     //2. For each character in the text, write it to uLCD
     for (int i = 0; line[i] && i < 17; i++) //We can simplify by limiting each line to 17 char
     {

@@ -84,6 +84,9 @@ typedef struct {
 #define MUD 10
 #define FIRE 11
 #define EARTH 12
+#define ENEMY 13
+#define BOSS 14
+#define TOFU 15
 
 /**
  * Initializes the internal structures for all maps. This does not populate
@@ -179,8 +182,11 @@ void add_wall(int x, int y, int dir, int len);
  * before adding the plant.
  */
 void add_plant(int x, int y);
+void add_tofu(int x, int y);
 void add_door(int x, int y, int dir, int len);
 void add_npc(int x, int y);
+void add_enemy(int x, int y);
+void add_boss(int x, int y);
 void add_stairs(int x, int y, int tm, int tx, int ty);
 void add_cave(int x, int y, int n,int tm, int tx, int ty);
 void add_mud(int x, int y, int dir, int len);

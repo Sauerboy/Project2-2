@@ -88,6 +88,18 @@ void maps_init()
     // 3. Set the first map to be active
     Map* map = maps;
     int count = 0;
+    count++;
+    map->h = 50;
+    map->w = 50;
+    map->items = createHashTable(map_hash, MHF_NBUCKETS);
+    map++;
+
+    count++;
+    map->h = 16;
+    map->w = 16;
+    map->items = createHashTable(map_hash, MHF_NBUCKETS);
+    map++;
+
     while(count++ < NUM_MAPS) {
     map->h = 50;
     map->w = 50;
@@ -332,6 +344,22 @@ void add_water(int x, int y)
     if (val) free(val); // If something is already there, free it
 }
 
+void add_tofu(int x, int y)
+{
+
+   //****************
+    // TODO: Implement
+    //****************
+    // 1. Implement the same way as how we add plant
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = TOFU;
+    w1->draw = draw_tofu;
+    w1->walkable = true;
+    w1->data = NULL;
+    void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+    if (val) free(val); // If something is already there, free it
+}
+
 void add_fire(int x, int y)
 {
     //****************
@@ -357,6 +385,36 @@ void add_earth(int x, int y)
     w1->type = EARTH;
     w1->draw = draw_earth;
     w1->walkable = true;
+    w1->data = NULL;
+    void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+    if (val) free(val); // If something is already there, free it
+}
+
+void add_enemy(int x, int y)
+{
+    //****************
+    // TODO: Implement
+    //****************
+    // 1. Implement the same way as how we add plant
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = ENEMY;
+    w1->draw = draw_enemy;
+    w1->walkable = false;
+    w1->data = NULL;
+    void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+    if (val) free(val); // If something is already there, free it
+}
+
+void add_boss(int x, int y)
+{
+    //****************
+    // TODO: Implement
+    //****************
+    // 1. Implement the same way as how we add plant
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = BOSS;
+    w1->draw = draw_boss;
+    w1->walkable = false;
     w1->data = NULL;
     void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
     if (val) free(val); // If something is already there, free it

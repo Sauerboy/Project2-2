@@ -53,8 +53,11 @@ void draw_border();
  */
 void draw_nothing(int u, int v);
 void draw_wall(int u, int v);
+void draw_tofu(int u, int v);
 void draw_plant(int u, int v);
 void draw_mud(int u, int v);
+void draw_enemy(int u, int v);
+void draw_boss(int u, int v);
 void draw_door(int u, int v);
 void draw_npc(int u, int v);
 void draw_stairs(int u, int v);

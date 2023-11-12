@@ -209,7 +209,19 @@ int update_game(int action)
                     long_speech(lines, 7);
                     return FULL_DRAW;
                     }
-
+                    if (Player.has_item) {
+                    const char* lines [8];
+                    lines[0] = "I will teach you  ";
+                    lines[1] = "tofu shuriken. You";
+                    lines[3] = "must harvest poiso";
+                    lines[4] = "nous tofu in the  ";
+                    lines[5] = "cave. Now, go into";
+                    lines[6] = "the cave and      ";
+                    lines[7] = "defeat Aaron!     ";
+                    long_speech(lines, 8);
+                    Player.talked_to_npc = true;
+                    return FULL_DRAW;
+                    }
                     
                     return FULL_DRAW;
                 }
@@ -237,9 +249,9 @@ int update_game(int action)
             //     -return FULL_DRAW to redraw the scene
             if (get_here(Player.x, Player.y)->type == CAVE) {
                     if (Player.talked_to_npc) {
-                        speech("You must fight", "The mighty Cappello");
+                        speech("You must fight", "The mighty Aaron");
                         map_erase(0,0);
-                        Player.x = Player.y = 0;
+                        Player.x = Player.y = 5;
                         set_active_map(1);
                         return FULL_DRAW;
                     }
@@ -250,8 +262,9 @@ int update_game(int action)
             //    - and set the map back to the main big map
             //     -return FULL_DRAW to redraw the scene
             if (get_here(Player.x, Player.y)->type == STAIRS) {
-                        
-                        set_active_map(1);
+                        speech("Great job!", "Returning home");
+                        map_erase(0,0);
+                        set_active_map(0);
                         return FULL_DRAW;
                     }
 
@@ -261,7 +274,6 @@ int update_game(int action)
             break;
         
         case ATTACK_BUTTON:
-        break;
             //******************
             // TODO: Implement
             //******************
@@ -272,8 +284,27 @@ int update_game(int action)
             //      update the player struct as needed
             //      if enemy is Pete, make sure that the right attack is being used
             //      If pete is defeated, update game as nescessary
-            
-
+            if (get_north(Player.x, Player.y)->type == ENEMY ) {
+                    speech("I've been beaten", "Here's some tofu");
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.has_item = true;
+                }
+            if (get_south(Player.x, Player.y)->type == ENEMY ) {
+                    speech("I've been beaten", "Here's some tofu");
+                    add_slain_enemy(Player.x, Player.y - 1);
+                    Player.has_item = true;
+                }
+            if (get_east(Player.x, Player.y)->type == ENEMY ) {
+                    speech("I've been beaten", "Here's some tofu");
+                    add_slain_enemy(Player.x + 1, Player.y);
+                    Player.has_item = true;
+                }
+            if (get_west(Player.x, Player.y)->type == ENEMY ) {
+                    speech("I've been beaten", "Here's some tofu");
+                    add_slain_enemy(Player.x - 1, Player.y);
+                    Player.has_item = true;
+                }
+            return FULL_DRAW;
         //***********
         // Add more cases as needed
         //***********
@@ -432,15 +463,13 @@ void init_main_map()
     //***********************************
 
     //Add any extra characters/items here for your project
-
+    add_enemy(15, 10);
 
 
 
     //Prints out map
     print_map();
 }
-
-
 
 
 
@@ -459,11 +488,24 @@ void init_small_map()
     // 1. Add walls to the smaller map.
     //    Set the dimensions to be 16x16  <-- you may change to your liking, but must be smaller than the main map
     //    Hint: See how walls are initialized in the main map
+
     //
-    // 2. Add a way to access your specail attacks either here or in update_game() or anywhere you feel would be the best
+    //Adding wall borders 
+    pc.printf("Adding Fire!\r\n");
+    for(int i = map_width() + 3; i < map_area(); i += 10)
+    {
+        add_fire(i % map_width(), i / map_width());
+    }
+
+    pc.printf("Adding walls!\r\n");
+    add_wall(0,              0,              HORIZONTAL, map_width());
+    add_wall(0,              map_height()-1, HORIZONTAL, map_width());
+    add_wall(0,              0,              VERTICAL,   map_height());
+    add_wall(map_width()-1,  0,              VERTICAL,   map_height());
+    // 2. Add a way to access your special attacks either here or in update_game() or anywhere you feel would be the best
     //
     // 3. Add Boss in the map
-
+    add_boss(5, 12);
 
     // You may add any extra characters/items here for your project
 

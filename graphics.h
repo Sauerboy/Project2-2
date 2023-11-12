@@ -69,5 +69,6 @@ void draw_water(int u , int v);
 void draw_fire(int u , int v);
 void draw_earth(int u , int v);
 void draw_buzz(int u, int v);
+void draw_game_over();
 
 #endif // GRAPHICS_H

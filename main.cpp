@@ -39,6 +39,7 @@ struct {
     bool game_solved;   // flag when game is complete
     bool talked_to_npc; // flag when you've talked to npc
     bool has_item;
+    bool has_tofu;
 
     //You will need to add more flags as needed
 
@@ -206,19 +207,19 @@ int update_game(int action)
                     lines[4] = "shuriken. You     ";
                     lines[5] = "need this attack  ";
                     lines[6] = "to defeat Aaron   ";
-                    long_speech(lines, 7);
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
                     return FULL_DRAW;
                     }
                     if (Player.has_item) {
-                    const char* lines [8];
+                    const char* lines [7];
                     lines[0] = "I will teach you  ";
                     lines[1] = "tofu shuriken. You";
-                    lines[3] = "must harvest poiso";
-                    lines[4] = "nous tofu in the  ";
-                    lines[5] = "cave. Now, go into";
-                    lines[6] = "the cave and      ";
-                    lines[7] = "defeat Aaron!     ";
-                    long_speech(lines, 8);
+                    lines[2] = "must harvest poiso";
+                    lines[3] = "nous tofu in the  ";
+                    lines[4] = "cave. Now, go into";
+                    lines[5] = "the cave and      ";
+                    lines[6] = "defeat Aaron!     ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
                     Player.talked_to_npc = true;
                     return FULL_DRAW;
                     }
@@ -238,6 +239,16 @@ int update_game(int action)
                         return GAME_OVER;
                     }
                     speech("You must acquire a key", NULL);
+                    return FULL_DRAW;
+                }
+
+            if (get_north(Player.x, Player.y)->type == TOFU ||
+                get_south(Player.x, Player.y)->type == TOFU ||
+                get_east(Player.x, Player.y)->type == TOFU  ||
+                get_west(Player.x, Player.y)->type == TOFU  ||
+                get_here(Player.x, Player.y)->type == TOFU ) {
+                    Player.has_tofu = true;
+                    speech("Tofu has been", "farmed");
                     return FULL_DRAW;
                 }
 
@@ -288,22 +299,72 @@ int update_game(int action)
                     speech("I've been beaten", "Here's some tofu");
                     add_slain_enemy(Player.x, Player.y + 1);
                     Player.has_item = true;
+                    return FULL_DRAW;
                 }
             if (get_south(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
                     add_slain_enemy(Player.x, Player.y - 1);
                     Player.has_item = true;
+                    return FULL_DRAW;
                 }
             if (get_east(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
                     add_slain_enemy(Player.x + 1, Player.y);
                     Player.has_item = true;
+                    return FULL_DRAW;
                 }
             if (get_west(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
                     add_slain_enemy(Player.x - 1, Player.y);
                     Player.has_item = true;
+                    return FULL_DRAW;
                 }
+
+            if (Player.has_tofu) {
+            if (get_north(Player.x, Player.y)->type == BOSS ) {
+                    speech("Tofu no! I've", "been slain!");
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.has_key = true;
+                    return FULL_DRAW;
+                }
+            if (get_south(Player.x, Player.y)->type == BOSS ) {
+                    speech("Tofu no! I've", "been slain!");
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.has_key = true;
+                    return FULL_DRAW;
+                }
+            if (get_east(Player.x, Player.y)->type == BOSS ) {
+                    speech("Tofu no! I've", "been slain!");
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.has_key = true;
+                    return FULL_DRAW;
+                }
+            if (get_west(Player.x, Player.y)->type == BOSS ) {
+                    speech("Tofu no! I've", "been slain!");
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.has_key = true;
+                    return FULL_DRAW;
+                }
+            }
+
+            if (!Player.has_tofu) {
+            if (get_north(Player.x, Player.y)->type == BOSS ) {
+                    speech("You'll never beat me", "till you find my weakness");
+                    return FULL_DRAW;
+                }
+            if (get_south(Player.x, Player.y)->type == BOSS ) {
+                    speech("You'll never beat me", "till you find my weakness");
+                    return FULL_DRAW;
+                }
+            if (get_east(Player.x, Player.y)->type == BOSS ) {
+                    speech("You'll never beat me", "till you find my weakness");
+                    return FULL_DRAW;
+                }
+            if (get_west(Player.x, Player.y)->type == BOSS ) {
+                    speech("You'll never beat me", "till you find my weakness");
+                    return FULL_DRAW;
+                }
+            }
             return FULL_DRAW;
         //***********
         // Add more cases as needed
@@ -393,9 +454,6 @@ void draw_game(int init)
     draw_upper_status();
     draw_lower_status();
 }
-
-
-
 
 
 
@@ -506,6 +564,7 @@ void init_small_map()
     //
     // 3. Add Boss in the map
     add_boss(5, 12);
+    add_tofu(6, 9);
 
     // You may add any extra characters/items here for your project
 
@@ -566,7 +625,7 @@ int main()
 
         // 3b. Check for game over based on update game result
         if (result == GAME_OVER) {
-            pc.printf("Game Over");
+            break;
         }
         // 4. Draw screen to uLCD
         bool full_draw = false;
@@ -578,7 +637,7 @@ int main()
         int dt = t.read_ms();
         if (dt < 100) wait_ms(100 - dt);
     }
-    
+    draw_game_over();
 
 }
 

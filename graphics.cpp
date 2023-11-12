@@ -46,6 +46,12 @@ void draw_img(int u, int v, const char* img)
     wait_us(250); // Recovery time!
 }
 
+void draw_game_over() {
+    uLCD.background_color(GREEN);
+    uLCD.cls();
+    uLCD.locate(2, 5);
+    uLCD.printf("Game Over!");
+}
 
 ///////////////////////////////////////////
 //Simple drawing of objects using uLCD methods

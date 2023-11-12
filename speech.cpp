@@ -129,10 +129,10 @@ void long_speech(const char* lines[], int n)
     draw_speech_bubble();
     //2. For each lines, display only two lines at a time
     //   If two lines are displayed, make sure to wait (call the wait function)
-    for(int i = 0; i < n; i++) {
-    draw_speech_line(lines[i++], 0);
-    if (i < n) {
-    draw_speech_line(lines[i], 1);
+    for(int i = 0; i < n; i+=2) {
+    draw_speech_line(lines[i], 0);
+    if (i+1 < n) {
+    draw_speech_line(lines[i+1], 1);
     } else {
     draw_speech_line("                 ", 1);
     }

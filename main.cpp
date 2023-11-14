@@ -453,8 +453,14 @@ int update_game(int action)
  */
 void draw_game(int init)
 {
+    if (Player.px != Player.x || Player.py != Player.y) {
+    update_status(Player.x, Player.y);
+    }
     // Draw game border first
-    if(init) draw_border();
+    if(init) {
+        draw_border();
+        update_status(Player.x, Player.y);
+        }
     
     // Iterate over all visible map tiles
     for (int i = -5; i <= 5; i++) // Iterate over columns of tiles
@@ -687,8 +693,7 @@ int main()
         // 2. Determine action (get_action)       
         int action = get_action(in);
         // 3. Update game (update_game)
-        int result = update_game(action);;  // Set this variable "result" for the resulting state after update game
-
+        int result = update_game(action);  // Set this variable "result" for the resulting state after update game
         // 3b. Check for game over based on update game result
         if (result == GAME_OVER) {
             break;

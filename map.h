@@ -200,6 +200,7 @@ void add_fire(int x, int y);
 void add_earth(int x, int y);
 void add_buzz(int x, int y);
 void add_slain_enemy(int x, int y);
+void update_status(int x, int y);
 int get_active_map_index();
 
 

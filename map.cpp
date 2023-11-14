@@ -574,7 +574,11 @@ void add_cave(int x, int y, int n, int tm, int tx, int ty)
     void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
     if (val) free(val); // If something is already there, free it    
 }
-
+void update_status(int x, int y) {
+    draw_upper_status();
+    uLCD.locate(0, 0);
+    uLCD.printf("X: %d, Y: %d   ", x, y);
+}
 
 void add_mud(int x, int y, int dir, int len)
 {

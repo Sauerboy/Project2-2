@@ -37,7 +37,8 @@ struct {
     int px, py;         // Previous locations
     bool has_key;       // flag when obtained the key
     bool game_solved;   // flag when game is complete
-    bool talked_to_npc; // flag when you've talked to npc
+    bool talked_to_npc;
+    bool learned_move; // flag when you've talked to npc
     bool has_item;
     bool has_tofu;
 
@@ -151,7 +152,7 @@ int update_game(int action)
             //TODO: Implement
             //1. Check the item north of the player
             if(get_north(Player.x, Player.y)->walkable) {
-                Player.y++;
+                Player.y--;
             }
             //2. Make sure to not walk through walls
             //3. If it is not a wall, the walk up by updating player's coordinates
@@ -167,7 +168,7 @@ int update_game(int action)
         case GO_DOWN:
             //TODO: Implement
             if(get_south(Player.x, Player.y)->walkable) {
-                Player.y--;
+                Player.y++;
             }
             break;
             
@@ -182,6 +183,13 @@ int update_game(int action)
 
         case ACTION_BUTTON:
 
+        if (get_north(Player.x, Player.y)->type == GOLD ||
+            get_south(Player.x, Player.y)->type == GOLD ||
+            get_east(Player.x, Player.y)->type == GOLD ||
+            get_west(Player.x, Player.y)->type == GOLD) {
+                return GAME_OVER;
+            }
+
             //******************
             // TODO: Implement
             //******************
@@ -194,8 +202,18 @@ int update_game(int action)
                 get_south(Player.x, Player.y)->type == NPC ||
                 get_east(Player.x, Player.y)->type == NPC ||
                 get_west(Player.x, Player.y)->type == NPC) {
-                    if (Player.game_solved) {
-                        Player.has_key = true;
+                    if (!Player.talked_to_npc) {
+                        const char* lines [4];
+                        lines[0] = "Nice to meet you ";
+                        lines[1] = "My name is       ";
+                        lines[2] = "Cappello. Come   ";
+                        lines[3] = "back for a quest.";
+                        long_speech(lines, 4);
+                        Player.talked_to_npc = true;
+                        return FULL_DRAW;
+                    }
+                    if (Player.has_key) {
+                        speech("Great Job! Go","unlock the door");
                         return FULL_DRAW;
                     }
                     if (!Player.has_item) {
@@ -220,7 +238,7 @@ int update_game(int action)
                     lines[5] = "the cave and      ";
                     lines[6] = "defeat Aaron!     ";
                     long_speech(lines, sizeof(lines)/sizeof(lines[0]));
-                    Player.talked_to_npc = true;
+                    Player.learned_move = true;
                     return FULL_DRAW;
                     }
                     
@@ -231,27 +249,46 @@ int update_game(int action)
             //    - if the player has the key, you win the game
             //    - if not, show speech bubbles that the play needs to get the key 
             //     -return FULL_DRAW to redraw the scene
-            if (get_north(Player.x, Player.y)->type == DOOR ||
-                get_south(Player.x, Player.y)->type == DOOR ||
-                get_east(Player.x, Player.y)->type == DOOR ||
-                get_west(Player.x, Player.y)->type == DOOR) {
+            if (get_north(Player.x, Player.y)->type == DOOR) {
                     if(Player.has_key) {
-                        return GAME_OVER;
+                        erase_door(Player.x, Player.y - 1);
+                        return FULL_DRAW;
                     }
-                    speech("You must acquire a key", NULL);
+                    speech("Get a key", "To open this door");
                     return FULL_DRAW;
                 }
 
-            if (get_north(Player.x, Player.y)->type == TOFU ||
-                get_south(Player.x, Player.y)->type == TOFU ||
-                get_east(Player.x, Player.y)->type == TOFU  ||
-                get_west(Player.x, Player.y)->type == TOFU  ||
-                get_here(Player.x, Player.y)->type == TOFU ) {
-                    Player.has_tofu = true;
-                    speech("Tofu has been", "farmed");
-                    return FULL_DRAW;
-                }
+            if (get_north(Player.x, Player.y)->type == TOFU) {
+                Player.has_tofu = true;
+                speech("Tofu has been", "farmed");
+                erase_tofu(Player.x, Player.y - 1);
+                return FULL_DRAW;
+            }
+            if (get_south(Player.x, Player.y)->type == TOFU) {
+                Player.has_tofu = true;
+                speech("Tofu has been", "farmed");
+                erase_tofu(Player.x, Player.y + 1);
+                return FULL_DRAW;
+            }
+            if (get_east(Player.x, Player.y)->type == TOFU) {
+                Player.has_tofu = true;
+                speech("Tofu has been", "farmed");
+                erase_tofu(Player.x + 1, Player.y);
+                return FULL_DRAW;
+            }
+            if (get_west(Player.x, Player.y)->type == TOFU) {
+                Player.has_tofu = true;
+                speech("Tofu has been", "farmed");
+                erase_tofu(Player.x - 1, Player.y);
+                return FULL_DRAW;
+            }
 
+            if (get_here(Player.x, Player.y)->type == TOFU) {
+                Player.has_tofu = true;
+                speech("Tofu has been", "farmed");
+                erase_tofu(Player.x, Player.y);
+                return FULL_DRAW;
+            }
 
             // 3. Check if on Pete's cave
             //    - if the player has talked to the npc, then start the speech bubble to fight buzz
@@ -259,11 +296,18 @@ int update_game(int action)
             //    - and set the map to the small map
             //     -return FULL_DRAW to redraw the scene
             if (get_here(Player.x, Player.y)->type == CAVE) {
-                    if (Player.talked_to_npc) {
+                    if (Player.learned_move) {
                         speech("You must fight", "The mighty Aaron");
                         map_erase(0,0);
                         Player.x = Player.y = 5;
                         set_active_map(1);
+                        return FULL_DRAW;
+                    } else {
+                    const char* lines [3];
+                    lines[0] = "Go find Capello   ";
+                    lines[1] = "He will teach you ";
+                    lines[2] = "hidden tofu arts  ";
+                    long_speech(lines, 3);
                         return FULL_DRAW;
                     }
                 }
@@ -297,25 +341,29 @@ int update_game(int action)
             //      If pete is defeated, update game as nescessary
             if (get_north(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
-                    add_slain_enemy(Player.x, Player.y + 1);
+                    add_slain_enemy(Player.x, Player.y - 1);
+                    Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
             if (get_south(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
-                    add_slain_enemy(Player.x, Player.y - 1);
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
             if (get_east(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
                     add_slain_enemy(Player.x + 1, Player.y);
+                    Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
             if (get_west(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
                     add_slain_enemy(Player.x - 1, Player.y);
+                    Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
@@ -349,19 +397,35 @@ int update_game(int action)
 
             if (!Player.has_tofu) {
             if (get_north(Player.x, Player.y)->type == BOSS ) {
-                    speech("You'll never beat me", "till you find my weakness");
+                    const char* lines [3];
+                    lines[0] = "You'll never beat ";
+                    lines[1] = "me untill you find";
+                    lines[2] = "my weakness       ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
                     return FULL_DRAW;
                 }
             if (get_south(Player.x, Player.y)->type == BOSS ) {
-                    speech("You'll never beat me", "till you find my weakness");
+                    const char* lines [3];
+                    lines[0] = "You'll never beat ";
+                    lines[1] = "me untill you find";
+                    lines[2] = "my weakness       ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
                     return FULL_DRAW;
                 }
             if (get_east(Player.x, Player.y)->type == BOSS ) {
-                    speech("You'll never beat me", "till you find my weakness");
+                    const char* lines [3];
+                    lines[0] = "You'll never beat ";
+                    lines[1] = "me untill you find";
+                    lines[2] = "my weakness       ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
                     return FULL_DRAW;
                 }
             if (get_west(Player.x, Player.y)->type == BOSS ) {
-                    speech("You'll never beat me", "till you find my weakness");
+                    const char* lines [3];
+                    lines[0] = "You'll never beat ";
+                    lines[1] = "me untill you find";
+                    lines[2] = "my weakness       ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
                     return FULL_DRAW;
                 }
             }
@@ -500,6 +564,8 @@ void init_main_map()
     add_wall(39, 0, VERTICAL, 10);
     add_door(33, 10, HORIZONTAL, 4);
 
+    add_gold(31, 1, HORIZONTAL, 8);
+
     //Adding extra cave to Buzz's evil lair
     pc.printf("Add cave\r\n");
     add_cave(cb_loc[0],cb_loc[1],1,1,5,5);      //Cave is set as a 4x4 block to be bigger
@@ -600,7 +666,7 @@ int main()
     Player.x = Player.y = 5;
     Player.has_key = false;
     Player.game_solved = false;
-    Player.talked_to_npc = false;
+    Player.learned_move = false;
     // Initial drawing
     draw_game(true);
 

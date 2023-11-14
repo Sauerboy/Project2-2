@@ -218,7 +218,7 @@ MapItem* get_north(int x, int y)
     // 1. Get map item 
     // 2. If the item exist and is a clear type, remove item
     // 3. Return the item 
-    return get_here(x, y + 1);
+    return get_here(x, y - 1);
 }
 
 /**
@@ -232,7 +232,7 @@ MapItem* get_south(int x, int y)
     // 1. Get map item 
     // 2. If the item exist and is a clear type, remove item
     // 3. Return the item 
-    return get_here(x, y - 1);
+    return get_here(x, y + 1);
 }
 
 /**
@@ -441,7 +441,25 @@ void add_slain_enemy(int x, int y)
     if (val) free(val); // If something is already there, free it
 }
 
-
+void erase_tofu(int x, int y)
+{
+    //****************
+    // TODO: Implement
+    //****************
+    // 1. Implement the same way as how we add plant
+    // Note: This function is to ovewrite enemy when it is defeated
+    //      You can do the following:
+    //      -   Overwrite enemy with any other item (say plant, mud)
+    //      -   Make a new drawing for a defeated enemy
+    //      -   Erase enemy instead 
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = CLEAR;
+    w1->draw = draw_nothing;
+    w1->walkable = true;
+    w1->data = NULL;
+    void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+    if (val) free(val); // If something is already there, free it
+}
 
 ////////////////////////////////////
 // Adding environment to the map
@@ -463,6 +481,21 @@ void add_wall(int x, int y, int dir, int len)
     }
 }
 
+void add_gold(int x, int y, int dir, int len)
+{
+    for(int i = 0; i < len; i++)
+    {
+        MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+        w1->type = GOLD;
+        w1->draw = draw_gold;
+        w1->walkable = false;
+        w1->data = NULL;
+        unsigned key = (dir == HORIZONTAL) ? XY_KEY(x+i, y) : XY_KEY(x, y+i);
+        void* val = insertItem(get_active_map()->items, key, w1);
+        if (val) free(val); // If something is already there, free it
+    }
+}
+
 void add_door(int x, int y, int dir, int len)
 {
     for(int i = 0; i < len; i++)
@@ -476,6 +509,26 @@ void add_door(int x, int y, int dir, int len)
         void* val = insertItem(get_active_map()->items, key, w1);
         if (val) free(val); // If something is already there, free it
     }
+}
+
+void erase_door(int x, int y) { 
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = CLEAR;
+    w1->draw = draw_nothing;
+    w1->walkable = true;
+    w1->data = NULL;
+
+
+    while(get_here(x, y)->type == DOOR) {
+        x--;
+    }
+    x++;
+    while(get_here(x, y)->type == DOOR) {
+        void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+        if (val) free(val); // If something is already there, free it
+        x++;
+    }
+
 }
 
 

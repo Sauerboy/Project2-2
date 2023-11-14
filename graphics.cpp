@@ -47,10 +47,10 @@ void draw_img(int u, int v, const char* img)
 }
 
 void draw_game_over() {
-    uLCD.background_color(GREEN);
+    uLCD.background_color(YELLOW);
     uLCD.cls();
     uLCD.locate(2, 5);
-    uLCD.printf("Game Over!");
+    uLCD.printf("You Win!");
 }
 
 ///////////////////////////////////////////
@@ -61,7 +61,9 @@ void draw_nothing(int u, int v)
 {
     uLCD.filled_rectangle(u, v, u+10, v+10, BLACK);
 }
-
+void draw_gold(int u, int v) {
+    uLCD.filled_rectangle(u, v, u+10, v+10, YELLOW);
+}
 void draw_water(int u, int v)
 {
     uLCD.filled_rectangle(u, v, u+10, v+10, BLUE);

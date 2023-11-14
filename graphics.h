@@ -52,6 +52,7 @@ void draw_border();
  * These can be used as the MapItem draw functions.
  */
 void draw_nothing(int u, int v);
+void draw_gold(int u, int v);
 void draw_wall(int u, int v);
 void draw_tofu(int u, int v);
 void draw_plant(int u, int v);

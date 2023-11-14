@@ -87,6 +87,7 @@ typedef struct {
 #define ENEMY 13
 #define BOSS 14
 #define TOFU 15
+#define GOLD 16
 
 /**
  * Initializes the internal structures for all maps. This does not populate
@@ -177,13 +178,17 @@ void map_erase(int x, int y);
  */
 void add_wall(int x, int y, int dir, int len);
 
+void add_gold(int x, int y, int dir, int len);
+
 /**
  * Add a PLANT item at (x,y). If there is already a MapItem at (x,y), erase it
  * before adding the plant.
  */
 void add_plant(int x, int y);
 void add_tofu(int x, int y);
+void erase_tofu(int x, int y);
 void add_door(int x, int y, int dir, int len);
+void erase_door(int x, int y);
 void add_npc(int x, int y);
 void add_enemy(int x, int y);
 void add_boss(int x, int y);

@@ -16,6 +16,7 @@
 #include "graphics.h"
 #include "speech.h"
 #include <math.h>
+#include <main.h>
 
 #define CITY_HIT_MARGIN 1
 #define CITY_UPPER_BOUND (SIZE_Y-(LANDSCAPE_HEIGHT+MAX_BUILDING_HEIGHT))
@@ -41,6 +42,7 @@ struct {
     bool learned_move; // flag when you've talked to npc
     bool has_item;
     bool has_tofu;
+    bool has_hat;
 
     //You will need to add more flags as needed
 
@@ -68,6 +70,11 @@ struct {
 #define GO_UP 6
 #define GO_DOWN 7
 
+#define RUN_LEFT 8
+#define RUN_RIGHT 9
+#define RUN_UP 10
+#define RUN_DOWN 11
+
 int get_action(GameInputs inputs)
 {
     //******************
@@ -84,6 +91,19 @@ int get_action(GameInputs inputs)
         return ATTACK_BUTTON;
     }
     // 2. Check for your navigation switch inputs and return the corresponding action value
+    if (inputs.ns_up && inputs.b4) {
+        return RUN_UP;
+    }
+    if (inputs.ns_down && inputs.b4) {
+        return RUN_DOWN;
+    }
+    if (inputs.ns_left && inputs.b4) {
+        return RUN_LEFT;
+    }
+    if (inputs.ns_right && inputs.b4) {
+        return RUN_RIGHT;
+    }
+
     if (inputs.ns_up) {
         return GO_UP;
     }
@@ -148,6 +168,57 @@ int update_game(int action)
 
     switch(action)
     {
+        case RUN_UP:
+            //TODO: Implement
+            //1. Check the item north of the player
+            if(get_north(Player.x, Player.y)->walkable) {
+                Player.y--;
+                draw_game(0);
+                if (get_north(Player.x, Player.y)->walkable) {
+                    Player.py = Player.y;
+                    Player.y--;
+                }
+            }
+            //2. Make sure to not walk through walls
+            //3. If it is not a wall, the walk up by updating player's coordinates
+            break;
+            
+        case RUN_LEFT:
+            //TODO: Implement
+            if(get_west(Player.x, Player.y)->walkable) {
+                Player.x--;
+                draw_game(0);
+            if (get_west(Player.x, Player.y)->walkable) {
+                Player.px = Player.x;
+                Player.x--;
+            }
+            }
+            break;
+            
+        case RUN_DOWN:
+            //TODO: Implement
+            if(get_south(Player.x, Player.y)->walkable) {
+                Player.y++;
+                draw_game(0);
+            if (get_south(Player.x, Player.y)->walkable) {
+                Player.py = Player.y;
+                Player.y++;
+            }
+            }
+            break;
+            
+        case RUN_RIGHT:
+            //TODO: Implement
+            if(get_east(Player.x, Player.y)->walkable) {
+                Player.x++;
+                draw_game(0);
+            if (get_east(Player.x, Player.y)->walkable) {
+                Player.px = Player.x;
+                Player.x++;
+            }
+            }
+            break;
+
         case GO_UP:
             //TODO: Implement
             //1. Check the item north of the player
@@ -226,6 +297,8 @@ int update_game(int action)
                     lines[5] = "need this attack  ";
                     lines[6] = "to defeat Aaron   ";
                     long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    add_slain_enemy(Player.x + (get_east(Player.x, Player.y)->type == NPC ? 1 : 0), Player.y);
+                    add_npc(25, 25);
                     return FULL_DRAW;
                     }
                     if (Player.has_item) {
@@ -368,31 +441,78 @@ int update_game(int action)
                     return FULL_DRAW;
                 }
 
+
+
+            if (get_north(Player.x, Player.y)->type == HATENEMY ) {
+                    speech("I've been beaten", "Here's my hat");
+                    add_slain_enemy(Player.x, Player.y - 1);
+                    Player.has_hat = true;
+                    return FULL_DRAW;
+                }
+            if (get_south(Player.x, Player.y)->type == HATENEMY ) {
+                    speech("I've been beaten", "Here's my hat");
+                    add_slain_enemy(Player.x, Player.y + 1);
+                    Player.has_hat = true;
+                    return FULL_DRAW;
+            }
+            if (get_east(Player.x, Player.y)->type == HATENEMY ) {
+                    speech("I've been beaten", "Here's my hat");
+                    add_slain_enemy(Player.x + 1, Player.y);
+                    Player.has_hat = true;
+                    return FULL_DRAW;
+            }
+            if (get_west(Player.x, Player.y)->type == HATENEMY ) {
+                    speech("I've been beaten", "Here's my hat");
+                    add_slain_enemy(Player.x - 1, Player.y);
+                    Player.has_hat = true;
+                    return FULL_DRAW;
+            }
+
+
+
             if (Player.has_tofu) {
-            if (get_north(Player.x, Player.y)->type == BOSS ) {
+            for (int i = 0; i < 5; i++) {
+            if (get_here(Player.x, Player.y - i)->type == BOSS ) {
+                    for (int j = 1; j <= i; j++) {
+                        add_tofu(Player.x, Player.y-j);
+                        draw_game(true);
+                        pc.printf("Throwing Loop");
+                    }
                     speech("Tofu no! I've", "been slain!");
-                    add_slain_enemy(Player.x, Player.y + 1);
                     Player.has_key = true;
                     return FULL_DRAW;
                 }
-            if (get_south(Player.x, Player.y)->type == BOSS ) {
+            if (get_here(Player.x, Player.y + i)->type == BOSS ) {
+                    for (int j = 1; j <= i; j++) {
+                        add_tofu(Player.x, Player.y+j);
+                        draw_game(true);
+                        pc.printf("Throwing Loop");
+                    }
                     speech("Tofu no! I've", "been slain!");
-                    add_slain_enemy(Player.x, Player.y + 1);
                     Player.has_key = true;
                     return FULL_DRAW;
                 }
-            if (get_east(Player.x, Player.y)->type == BOSS ) {
+            if (get_here(Player.x - i, Player.y)->type == BOSS ) {
+                    for (int j = 1; j <= i; j++) {
+                        add_tofu(Player.x-j, Player.y);
+                        draw_game(true);
+                        pc.printf("Throwing Loop");
+                    }
                     speech("Tofu no! I've", "been slain!");
-                    add_slain_enemy(Player.x, Player.y + 1);
                     Player.has_key = true;
                     return FULL_DRAW;
                 }
-            if (get_west(Player.x, Player.y)->type == BOSS ) {
+            if (get_here(Player.x + i, Player.y)->type == BOSS ) {
+                    for (int j = 1; j <= i; j++) {
+                        add_tofu(Player.x+j, Player.y);
+                        draw_game(true);
+                        pc.printf("Throwing Loop");
+                    }
                     speech("Tofu no! I've", "been slain!");
-                    add_slain_enemy(Player.x, Player.y + 1);
                     Player.has_key = true;
                     return FULL_DRAW;
                 }
+            }
             }
 
             if (!Player.has_tofu) {
@@ -486,13 +606,14 @@ void draw_game(int init)
 //            if (init && i == 0 && j == 0) // Only draw the player on init
             if ( i == 0 && j == 0) // always draw the player
             {
-                draw_player(u, v, Player.has_key);
+                draw_player(u, v, Player.has_key, Player.has_hat);
                 continue;
             }
             else if (x >= 0 && y >= 0 && x < map_width() && y < map_height()) // Current (i,j) in the map
             {
                 MapItem* curr_item = get_here(x, y);
                 MapItem* prev_item = get_here(px, py);
+
                 if (init || curr_item != prev_item) // Only draw if they're different
                 {
                     if (curr_item) // There's something here! Draw it
@@ -594,7 +715,7 @@ void init_main_map()
 
     //Add any extra characters/items here for your project
     add_enemy(15, 10);
-
+    add_hat_enemy(27, 34);
 
 
     //Prints out map

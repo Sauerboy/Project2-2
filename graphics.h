@@ -29,7 +29,7 @@ void draw_img(int u, int v, const char* img);
 /**
  * Draws the player. This depends on the player state, so it is not a DrawFunc.
  */
-void draw_player(int u, int v, int key);
+void draw_player(int u, int v, int key, bool hat);
 
 /**
  * Draw the upper status bar.
@@ -58,6 +58,7 @@ void draw_tofu(int u, int v);
 void draw_plant(int u, int v);
 void draw_mud(int u, int v);
 void draw_enemy(int u, int v);
+void draw_hat(int u, int v);
 void draw_boss(int u, int v);
 void draw_door(int u, int v);
 void draw_npc(int u, int v);

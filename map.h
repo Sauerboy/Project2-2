@@ -88,6 +88,7 @@ typedef struct {
 #define BOSS 14
 #define TOFU 15
 #define GOLD 16
+#define HATENEMY 17
 
 /**
  * Initializes the internal structures for all maps. This does not populate
@@ -191,6 +192,7 @@ void add_door(int x, int y, int dir, int len);
 void erase_door(int x, int y);
 void add_npc(int x, int y);
 void add_enemy(int x, int y);
+void add_hat_enemy(int x, int y);
 void add_boss(int x, int y);
 void add_stairs(int x, int y, int tm, int tx, int ty);
 void add_cave(int x, int y, int n,int tm, int tx, int ty);

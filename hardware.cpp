@@ -23,6 +23,7 @@ Serial pc(USBTX,USBRX);                     // USB Console (tx, rx)
 DigitalIn button1(p21);                     // Pushbuttons (pin)
 DigitalIn button2(p22);
 DigitalIn button3(p23);
+DigitalIn button4(p24);
 AnalogOut DACout(p18);                      // Speaker (pin)
 PwmOut speaker(p26);
 wave_player waver(&DACout);
@@ -46,6 +47,7 @@ int hardware_init()
     button1.mode(PullUp);
     button2.mode(PullUp);
     button3.mode(PullUp);
+    button4.mode(PullUp);
     
     return ERROR_NONE;
 }
@@ -67,6 +69,7 @@ GameInputs read_inputs()
     in.b1 = !button1.read();
     in.b2 = !button2.read();
     in.b3 = !button3.read();
+    in.b4 = !button4.read();
     //NavSwitch Read
     //2. Read navigation switch buttons from GameInputs in
     //   (up,down,left,right,center)
@@ -79,9 +82,10 @@ GameInputs read_inputs()
 
     //For debugging inputs
     #ifdef F_DEBUG
-        pc.printf("Inputs: %d %d %d | %f %f %f | %d %d %d %d %d \r\n", in.b1, 
+        pc.printf("Inputs: %d %d %d %d| %f %f %f | %d %d %d %d %d\r\n", in.b1, 
                                                                     in.b2, 
-                                                                    in.b3, 
+                                                                    in.b3,
+                                                                    in.b4, 
                                                                     in.ns_up, 
                                                                     in.ns_down, 
                                                                     in.ns_left, 

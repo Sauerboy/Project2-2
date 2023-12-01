@@ -38,6 +38,9 @@ void draw_img(int u, int v, const char* img)
         else if (img[i] == 'Y') colors[i] = YELLOW;
         else if (img[i] == 'G') colors[i] = GREEN;
         else if (img[i] == 'D') colors[i] = DIRT;
+        else if (img[i] == 'G') colors[i] = GREEN;
+        else if (img[i] == 'B') colors[i] = BLUE;
+        else if (img[i] == 'P') colors[i] = PURPLE;
         else if (img[i] == '5') colors[i] = LGREY;
         else if (img[i] == '3') colors[i] = DGREY;
         else colors[i] = BLACK;
@@ -79,14 +82,15 @@ void draw_tofu(int u, int v)
     uLCD.filled_rectangle(u, v, u+10, v+10, PURPLE);
 }
 
-void draw_player(int u, int v, int key)
+void draw_player(int u, int v, int key, bool hat)
 {
     if (key)
     {
         uLCD.filled_rectangle(u, v, u+11, v+11, YELLOW);
     }
-    else
-    {
+    else if (hat) {
+        draw_hat(u, v);
+    } else {
         uLCD.filled_rectangle(u, v, u+11, v+11, RED);
     }
 }
@@ -156,6 +160,22 @@ void draw_plant(int u, int v)
     draw_img(u, v, img);
 }
 
+void draw_hat(int u, int v)
+{
+    const char* img = 
+        "PPPPPPPPPPP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PGGGGGGGGGP"
+        "PPPPPPPPPPP";
+    draw_img(u, v, img);
+}
 
 void draw_npc(int u, int v)
 {

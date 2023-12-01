@@ -17,7 +17,7 @@
 // #include "MMA8452.h"
 #include "uLCD_4DGL.h"
 #include "Nav_Switch.h"
-// #include "SDFileSystem.h"
+#include "SDFileSystem.h"
 
 
 
@@ -44,7 +44,7 @@ extern AnalogOut DACout;    // Speaker
 extern PwmOut speaker;
 extern wave_player waver;
 extern Nav_Switch navs;     // Nav Switch
-// extern SDFileSystem sd;     // SD Card
+extern SDFileSystem sd;     // SD Card
 
 
 /////////////////////////////////////////

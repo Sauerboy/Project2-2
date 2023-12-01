@@ -11,6 +11,7 @@
 
 #include "globals.h"
 #include "hardware.h"
+#include "SDFileSystem.h"
 
 // We need to actually instantiate some of the globals for hardwares 
 // (i.e. declare them once without the extern keyword).
@@ -29,7 +30,7 @@ PwmOut speaker(p26);
 wave_player waver(&DACout);
 Nav_Switch navs(p12,p15,p14,p16,p13);       // Nav Switch
 BusOut mbedleds(LED1,LED2,LED3,LED4);
-//SDFileSystem sd(p5, p6, p7, p8, "sd");    // SD Card(mosi, miso, sck, cs)
+SDFileSystem sd(p5, p6, p7, p8, "sd");    // SD Card(mosi, miso, sck, cs)
 
 
 // Some hardware also needs to have functions called before it will set up

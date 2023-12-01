@@ -160,6 +160,23 @@ void draw_plant(int u, int v)
     draw_img(u, v, img);
 }
 
+void draw_exclamation_mark(int u, int v)
+{
+    const char* img = 
+        "    YYY    "
+        "    YYY    "
+        "    YYY    "
+        "    YYY    "
+        "    YYY    "
+        "    YYY    "
+        "    YYY    "
+        "           "
+        "           "
+        "    YYY    "
+        "    YYY    ";
+    draw_img(u, v, img);
+}
+
 void draw_hat(int u, int v)
 {
     const char* img = 
@@ -191,6 +208,23 @@ void draw_npc(int u, int v)
         "   RRRRR   "
         "    RRR    "
         "     R     ";
+    draw_img(u, v, img);
+}
+
+void draw_npc2(int u, int v)
+{
+    const char* img = 
+        "     P     "
+        "    PGP    "
+        "   PGGGP   "
+        "  PGGGGGP  "
+        " PGGGGGGGP "
+        "PGGGGGGGGGP"
+        " PGGGGGGGP "
+        "  PGGGGGP  "
+        "   PGGGP   "
+        "    PGP    "
+        "     P     ";
     draw_img(u, v, img);
 }
 

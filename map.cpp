@@ -327,6 +327,37 @@ void add_npc(int x, int y)
     if (val) free(val); // If something is already there, free it
 }
 
+void add_npc2(int x, int y)
+{
+    //****************
+    // TODO: Implement
+    //****************
+    // 1. Implement the same way as how we add plant
+    //     *Make the NPC NOT walkable
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = NPC2;
+    w1->draw = draw_npc2;
+    w1->walkable = false;
+    w1->data = NULL;
+    void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+    if (val) free(val); // If something is already there, free it
+}
+
+void add_exclamation_mark(int x, int y)
+{
+    //****************
+    // TODO: Implement
+    //****************
+    // 1. Implement the same way as how we add plant
+    //     *Make the NPC NOT walkable
+    MapItem* w1 = (MapItem*) malloc(sizeof(MapItem));
+    w1->type = EMARK;
+    w1->draw = draw_exclamation_mark;
+    w1->walkable = true;
+    w1->data = NULL;
+    void* val = insertItem(get_active_map()->items, XY_KEY(x, y), w1);
+    if (val) free(val); // If something is already there, free it
+}
 
 void add_water(int x, int y)
 {
@@ -436,7 +467,7 @@ void add_boss(int x, int y)
 }
 
 
-void add_slain_enemy(int x, int y)
+void add_nothing(int x, int y)
 {
     //****************
     // TODO: Implement
@@ -592,7 +623,8 @@ void add_cave(int x, int y, int n, int tm, int tx, int ty)
 void update_status(int x, int y) {
     draw_upper_status();
     uLCD.locate(0, 0);
-    uLCD.printf("X: %d, Y: %d   ", x, y);
+    uLCD.printf("X: %2d, Y: %2d   ", x, y);
+
 }
 
 void add_mud(int x, int y, int dir, int len)

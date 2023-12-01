@@ -89,6 +89,8 @@ typedef struct {
 #define TOFU 15
 #define GOLD 16
 #define HATENEMY 17
+#define EMARK 18
+#define NPC2 18
 
 /**
  * Initializes the internal structures for all maps. This does not populate
@@ -191,6 +193,8 @@ void erase_tofu(int x, int y);
 void add_door(int x, int y, int dir, int len);
 void erase_door(int x, int y);
 void add_npc(int x, int y);
+void add_npc2(int x, int y);
+void add_exclamation_mark(int x, int y);
 void add_enemy(int x, int y);
 void add_hat_enemy(int x, int y);
 void add_boss(int x, int y);
@@ -201,7 +205,7 @@ void add_water(int x, int y);
 void add_fire(int x, int y);
 void add_earth(int x, int y);
 void add_buzz(int x, int y);
-void add_slain_enemy(int x, int y);
+void add_nothing(int x, int y);
 void update_status(int x, int y);
 int get_active_map_index();
 

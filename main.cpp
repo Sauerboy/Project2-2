@@ -17,6 +17,7 @@
 #include "speech.h"
 #include <math.h>
 #include <main.h>
+#include "SDFileSystem.h"
 
 #define CITY_HIT_MARGIN 1
 #define CITY_UPPER_BOUND (SIZE_Y-(LANDSCAPE_HEIGHT+MAX_BUILDING_HEIGHT))
@@ -260,7 +261,23 @@ int update_game(int action)
             get_west(Player.x, Player.y)->type == GOLD) {
                 return GAME_OVER;
             }
-
+        
+        if (get_north(Player.x, Player.y)->type == NPC2 ||
+            get_south(Player.x, Player.y)->type == NPC2 ||
+            get_east(Player.x, Player.y)->type == NPC2 ||
+            get_west(Player.x, Player.y)->type == NPC2) {
+                if (!Player.has_hat) {
+                const char* lines[3];
+                        lines[0] = "Go find the man  ";
+                        lines[1] = "with the hat...  ";
+                        lines[2] = "AND STEAL IT!!   ";
+                        long_speech(lines, 3);
+                        return FULL_DRAW;
+                } else {
+                    speech("Great Job,","Nice Hat!");
+                    return FULL_DRAW;
+                }
+            }
             //******************
             // TODO: Implement
             //******************
@@ -269,10 +286,69 @@ int update_game(int action)
             //     - if so, mark the player has talked and give instructions on what to do
             //     - if the game is solved (defeated Buzz), give the player the key
             //     - return FULL_DRAW to redraw the scene
-            if (get_north(Player.x, Player.y)->type == NPC ||
-                get_south(Player.x, Player.y)->type == NPC ||
-                get_east(Player.x, Player.y)->type == NPC ||
-                get_west(Player.x, Player.y)->type == NPC) {
+            if (get_north(Player.x, Player.y)->type == NPC) {
+                    if (!Player.talked_to_npc) {
+                        add_exclamation_mark(Player.x, Player.y-2);
+                        draw_game(true);
+                        const char* lines [4];
+                        lines[0] = "Nice to meet you ";
+                        lines[1] = "My name is       ";
+                        lines[2] = "Cappello. Come   ";
+                        lines[3] = "back for a quest.";
+                        long_speech(lines, 4);
+                        Player.talked_to_npc = true;
+                        add_nothing(Player.x, Player.y-2);
+                        draw_game(true);
+                        return FULL_DRAW;
+                    }
+                    if (Player.has_key) {
+                        add_exclamation_mark(Player.x, Player.y-2);
+                        draw_game(true);
+                        speech("Great Job! Go","unlock the door");
+                        add_nothing(Player.x, Player.y-2);
+                        draw_game(true);
+                        return FULL_DRAW;
+                    }
+                    if (!Player.has_item) {
+                    add_exclamation_mark(Player.x, Player.y-2);
+                    draw_game(true);
+                    const char* lines [7];
+                    lines[0] = "Go acquire tofu   ";
+                    lines[1] = "from the ninja Koh";
+                    lines[2] = "ler. And I will te";
+                    lines[3] = "ach you the tofu  ";
+                    lines[4] = "shuriken. You     ";
+                    lines[5] = "need this attack  ";
+                    lines[6] = "to defeat Aaron   ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    add_nothing(Player.x + (get_east(Player.x, Player.y)->type == NPC ? 1 : 0), Player.y);
+                    add_npc(25, 25);
+                    add_nothing(Player.x, Player.y-2);
+                    draw_game(true);
+                    return FULL_DRAW;
+                    }
+                    if (Player.has_item) {
+                    add_exclamation_mark(Player.x, Player.y-2);
+                    draw_game(true);
+                    const char* lines [7];
+                    lines[0] = "I will teach you  ";
+                    lines[1] = "tofu shuriken. You";
+                    lines[2] = "must harvest poiso";
+                    lines[3] = "nous tofu in the  ";
+                    lines[4] = "cave. Now, go into";
+                    lines[5] = "the cave and      ";
+                    lines[6] = "defeat Aaron!     ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    Player.learned_move = true;
+                    add_nothing(Player.x, Player.y-2);
+                    draw_game(true);
+                    return FULL_DRAW;
+                    }
+                    
+                    return FULL_DRAW;
+                }
+
+                if (get_south(Player.x, Player.y)->type == NPC) {
                     if (!Player.talked_to_npc) {
                         const char* lines [4];
                         lines[0] = "Nice to meet you ";
@@ -297,7 +373,7 @@ int update_game(int action)
                     lines[5] = "need this attack  ";
                     lines[6] = "to defeat Aaron   ";
                     long_speech(lines, sizeof(lines)/sizeof(lines[0]));
-                    add_slain_enemy(Player.x + (get_east(Player.x, Player.y)->type == NPC ? 1 : 0), Player.y);
+                    add_nothing(Player.x + (get_east(Player.x, Player.y)->type == NPC ? 1 : 0), Player.y);
                     add_npc(25, 25);
                     return FULL_DRAW;
                     }
@@ -317,6 +393,131 @@ int update_game(int action)
                     
                     return FULL_DRAW;
                 }
+
+                if (get_east(Player.x, Player.y)->type == NPC) {
+                    if (!Player.talked_to_npc) {
+                        add_exclamation_mark(Player.x+1, Player.y-1);
+                        draw_game(true);
+                        const char* lines [4];
+                        lines[0] = "Nice to meet you ";
+                        lines[1] = "My name is       ";
+                        lines[2] = "Cappello. Come   ";
+                        lines[3] = "back for a quest.";
+                        long_speech(lines, 4);
+                        Player.talked_to_npc = true;
+                        add_nothing(Player.x+1, Player.y-1);
+                        draw_game(true);
+                        return FULL_DRAW;
+                    }
+                    if (Player.has_key) {
+                        add_exclamation_mark(Player.x+1, Player.y-1);
+                        draw_game(true);
+                        speech("Great Job! Go","unlock the door");
+                        add_nothing(Player.x+1, Player.y-2);
+                        draw_game(true);
+                        return FULL_DRAW;
+                    }
+                    if (!Player.has_item) {
+                    add_exclamation_mark(Player.x+1, Player.y-1);
+                    draw_game(true);
+                    const char* lines [7];
+                    lines[0] = "Go acquire tofu   ";
+                    lines[1] = "from the ninja Koh";
+                    lines[2] = "ler. And I will te";
+                    lines[3] = "ach you the tofu  ";
+                    lines[4] = "shuriken. You     ";
+                    lines[5] = "need this attack  ";
+                    lines[6] = "to defeat Aaron   ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    add_nothing(Player.x + (get_east(Player.x, Player.y)->type == NPC ? 1 : 0), Player.y);
+                    add_npc(25, 25);
+                    add_nothing(Player.x+1, Player.y-1);
+                    draw_game(true);
+                    return FULL_DRAW;
+                    }
+                    if (Player.has_item) {
+                    add_exclamation_mark(Player.x+1, Player.y-1);
+                    draw_game(true);
+                    const char* lines [7];
+                    lines[0] = "I will teach you  ";
+                    lines[1] = "tofu shuriken. You";
+                    lines[2] = "must harvest poiso";
+                    lines[3] = "nous tofu in the  ";
+                    lines[4] = "cave. Now, go into";
+                    lines[5] = "the cave and      ";
+                    lines[6] = "defeat Aaron!     ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    Player.learned_move = true;
+                    add_nothing(Player.x+1, Player.y-1);
+                    draw_game(true);
+                    return FULL_DRAW;
+                    }
+                    
+                    return FULL_DRAW;
+                }
+
+            if (get_west(Player.x, Player.y)->type == NPC) {
+                    if (!Player.talked_to_npc) {
+                        add_exclamation_mark(Player.x-1, Player.y-1);
+                        draw_game(true);
+                        const char* lines [4];
+                        lines[0] = "Nice to meet you ";
+                        lines[1] = "My name is       ";
+                        lines[2] = "Cappello. Come   ";
+                        lines[3] = "back for a quest.";
+                        long_speech(lines, 4);
+                        Player.talked_to_npc = true;
+                        add_nothing(Player.x-1, Player.y-1);
+                        draw_game(true);
+                        return FULL_DRAW;
+                    }
+                    if (Player.has_key) {
+                        add_exclamation_mark(Player.x-1, Player.y-1);
+                        draw_game(true);
+                        speech("Great Job! Go","unlock the door");
+                        add_nothing(Player.x, Player.y-2);
+                        draw_game(true);
+                        return FULL_DRAW;
+                    }
+                    if (!Player.has_item) {
+                    add_exclamation_mark(Player.x-1, Player.y-1);
+                    draw_game(true);
+                    const char* lines [7];
+                    lines[0] = "Go acquire tofu   ";
+                    lines[1] = "from the ninja Koh";
+                    lines[2] = "ler. And I will te";
+                    lines[3] = "ach you the tofu  ";
+                    lines[4] = "shuriken. You     ";
+                    lines[5] = "need this attack  ";
+                    lines[6] = "to defeat Aaron   ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    add_nothing(Player.x + (get_east(Player.x, Player.y)->type == NPC ? 1 : 0), Player.y);
+                    add_npc(25, 25);
+                    add_nothing(Player.x-1, Player.y-1);
+                    draw_game(true);
+                    return FULL_DRAW;
+                    }
+                    if (Player.has_item) {
+                    add_exclamation_mark(Player.x-1, Player.y-1);
+                    draw_game(true);
+                    const char* lines [7];
+                    lines[0] = "I will teach you  ";
+                    lines[1] = "tofu shuriken. You";
+                    lines[2] = "must harvest poiso";
+                    lines[3] = "nous tofu in the  ";
+                    lines[4] = "cave. Now, go into";
+                    lines[5] = "the cave and      ";
+                    lines[6] = "defeat Aaron!     ";
+                    long_speech(lines, sizeof(lines)/sizeof(lines[0]));
+                    Player.learned_move = true;
+                    add_nothing(Player.x-1, Player.y-1);
+                    draw_game(true);
+                    return FULL_DRAW;
+                    }
+                    
+                    return FULL_DRAW;
+                }
+
 
             // 2. Check if near a door
             //    - if the player has the key, you win the game
@@ -414,28 +615,32 @@ int update_game(int action)
             //      If pete is defeated, update game as nescessary
             if (get_north(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
-                    add_slain_enemy(Player.x, Player.y - 1);
+                    add_nothing(Player.x, Player.y - 1);
+                    playSound((char *)"/sd/oof.wav");
                     Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
             if (get_south(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
-                    add_slain_enemy(Player.x, Player.y + 1);
+                    add_nothing(Player.x, Player.y + 1);
+                    playSound((char *)"/sd/oof.wav");
                     Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
             if (get_east(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
-                    add_slain_enemy(Player.x + 1, Player.y);
+                    add_nothing(Player.x + 1, Player.y);
+                    playSound((char *)"/sd/oof.wav");
                     Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
                 }
             if (get_west(Player.x, Player.y)->type == ENEMY ) {
                     speech("I've been beaten", "Here's some tofu");
-                    add_slain_enemy(Player.x - 1, Player.y);
+                    add_nothing(Player.x - 1, Player.y);
+                    playSound((char *)"/sd/oof.wav");
                     Player.talked_to_npc = true;
                     Player.has_item = true;
                     return FULL_DRAW;
@@ -445,25 +650,25 @@ int update_game(int action)
 
             if (get_north(Player.x, Player.y)->type == HATENEMY ) {
                     speech("I've been beaten", "Here's my hat");
-                    add_slain_enemy(Player.x, Player.y - 1);
+                    add_nothing(Player.x, Player.y - 1);
                     Player.has_hat = true;
                     return FULL_DRAW;
                 }
             if (get_south(Player.x, Player.y)->type == HATENEMY ) {
                     speech("I've been beaten", "Here's my hat");
-                    add_slain_enemy(Player.x, Player.y + 1);
+                    add_nothing(Player.x, Player.y + 1);
                     Player.has_hat = true;
                     return FULL_DRAW;
             }
             if (get_east(Player.x, Player.y)->type == HATENEMY ) {
                     speech("I've been beaten", "Here's my hat");
-                    add_slain_enemy(Player.x + 1, Player.y);
+                    add_nothing(Player.x + 1, Player.y);
                     Player.has_hat = true;
                     return FULL_DRAW;
             }
             if (get_west(Player.x, Player.y)->type == HATENEMY ) {
                     speech("I've been beaten", "Here's my hat");
-                    add_slain_enemy(Player.x - 1, Player.y);
+                    add_nothing(Player.x - 1, Player.y);
                     Player.has_hat = true;
                     return FULL_DRAW;
             }
@@ -553,6 +758,8 @@ int update_game(int action)
         //***********
         // Add more cases as needed
         //***********
+        case MENU_BUTTON:
+            break;
     }
     
     return NO_RESULT;
@@ -708,6 +915,7 @@ void init_main_map()
 
     // Add NPC
     add_npc(10, 5);  //NPC is initialized to (x,y) = 10, 5. Feel free to move him around
+    add_npc2(21, 21);
     
     //***********************************
     // TODO: Implement As Needed
@@ -849,18 +1057,18 @@ void playSound(char* wav)
     
     if(wave_file != NULL) 
     {
-        printf("File opened successfully\n");
+        pc.printf("File opened successfully\n");
 
         //play wav file
-        printf("Sound playing...\n");
+        pc.printf("Sound playing...\n");
         waver.play(wave_file);
     
         //close wav file
-        printf("Sound stopped...\n");
+        pc.printf("Sound stopped...\n");
         fclose(wave_file);
         return;
     }
     
-    printf("Could not open file for reading - %s\n", wav);
+    pc.printf("Could not open file for reading - %s\n", wav);
     return;
 }

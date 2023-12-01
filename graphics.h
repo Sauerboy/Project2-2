@@ -11,6 +11,15 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+//Additional color definitions
+#define YELLOW 0xFFFF00
+#define BROWN  0xD2691E
+#define DIRT   BROWN
+// You can define more hex colors here
+#define BLUE 0xFF
+#define GREEN 0x32CD32
+#define PURPLE 0x7F00FF
+#define DARKGREEN 0x023020
 /**
  * Takes a string image and draws it to the screen. The string is 121 characters
  * long, and represents an 11x11 tile in row-major ordering (across, then down,

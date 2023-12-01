@@ -16,14 +16,7 @@
 // Drawing Images based on Characters
 ///////////////////////////////////////////
 
-//Additional color definitions
-#define YELLOW 0xFFFF00
-#define BROWN  0xD2691E
-#define DIRT   BROWN
-// You can define more hex colors here
-#define BLUE 0xFF
-#define GREEN 0x32CD32
-#define PURPLE 0x7F00FF
+
 
 //Function to draw images based on characters
 // - The function takes an image array and changes the color 

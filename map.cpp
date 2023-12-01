@@ -623,6 +623,8 @@ void add_cave(int x, int y, int n, int tm, int tx, int ty)
 void update_status(int x, int y) {
     draw_upper_status();
     uLCD.locate(0, 0);
+    uLCD.text_width(1);
+    uLCD.text_height(1);
     uLCD.printf("X: %2d, Y: %2d   ", x, y);
 
 }

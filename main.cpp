@@ -15,8 +15,8 @@
 #include "map.h"
 #include "graphics.h"
 #include "speech.h"
+#include <cstdio>
 #include <math.h>
-#include <main.h>
 #include "SDFileSystem.h"
 
 #define CITY_HIT_MARGIN 1
@@ -24,6 +24,8 @@
 
 // Helper function declarations
 void playSound(char* wav);
+void save_game();
+void draw_game(int init);
 
 
 /////////////////////////
@@ -759,14 +761,43 @@ int update_game(int action)
         // Add more cases as needed
         //***********
         case MENU_BUTTON:
+        uLCD.text_height(2);
+        uLCD.text_width(2);
+        uLCD.background_color(PURPLE);
+        uLCD.cls();
+        uLCD.locate(2,1);
+        uLCD.printf("MENU");
+        uLCD.locate(2,2);
+        uLCD.text_height(1);
+        uLCD.text_width(1);
+        uLCD.printf("Press the action button to continue\n");
+        uLCD.printf("Press button 4 to save your progress");
+        do {
+        pc.printf("Menu Loop/n");
+        if (read_inputs().b1) {
             break;
+        }
+        if (read_inputs().b4) {
+            save_game();
+            break;
+        }
+        } while (!read_inputs().b1);
+        uLCD.background_color(BLACK);
+        uLCD.cls();
+        return FULL_DRAW;
+        break;
     }
     
     return NO_RESULT;
 }
 
 
+void save_game() {
+    FILE *fb;
+    fb=fopen("/sd/mydir/saved.txt", "w");
+    fprintf(fb, "%d%d%d%d%d%d", Player.has_key, Player.talked_to_npc, Player.learned_move, Player.has_item, Player.has_tofu, Player.has_hat);
 
+}
 
 /////////////////////////
 // Draw Game
@@ -999,6 +1030,18 @@ int main()
     // Initialize game state
     set_active_map(0);
     Player.x = Player.y = 5;
+    // FILE *saved;
+    // saved=fopen(saved,"r");
+    // bool read[6];
+    // fread(read, sizeof(read), 1, saved);
+    // Player.has_key = read[0];
+    // Player.talked_to_npc = read[1];
+    // Player.learned_move = read[2];
+    // Player.has_item = read[3];
+    // Player.has_tofu = read[4];
+    // Player.has_hat = read[5];
+
+
     Player.has_key = false;
     Player.game_solved = false;
     Player.learned_move = false;

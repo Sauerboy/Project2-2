@@ -796,7 +796,7 @@ void save_game() {
     FILE *fb;
     fb=fopen("/sd/mydir/saved.txt", "w");
     fprintf(fb, "%d%d%d%d%d%d", Player.has_key, Player.talked_to_npc, Player.learned_move, Player.has_item, Player.has_tofu, Player.has_hat);
-
+    fclose(fb);
 }
 
 /////////////////////////
@@ -1030,17 +1030,19 @@ int main()
     // Initialize game state
     set_active_map(0);
     Player.x = Player.y = 5;
-    // FILE *saved;
-    // saved=fopen(saved,"r");
-    // bool read[6];
-    // fread(read, sizeof(read), 1, saved);
-    // Player.has_key = read[0];
-    // Player.talked_to_npc = read[1];
-    // Player.learned_move = read[2];
-    // Player.has_item = read[3];
-    // Player.has_tofu = read[4];
-    // Player.has_hat = read[5];
-
+    FILE *saved;
+    saved=fopen("/sd/mydir/saved.txt", "r");
+    if (saved != NULL) {
+    char read[6];
+    fread(read, sizeof(read), 1, saved);
+    Player.has_key = read[0] == '1';
+    Player.talked_to_npc = read[1] == '1';
+    Player.learned_move = read[2] == '1';
+    Player.has_item = read[3] == '1';
+    Player.has_tofu = read[4] == '1';
+    Player.has_hat = read[5] == '1';
+    fclose(saved);
+    }
 
     Player.has_key = false;
     Player.game_solved = false;
